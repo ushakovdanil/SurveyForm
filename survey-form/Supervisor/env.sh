@@ -1,0 +1,1 @@
+xargs -0 bash -c 'printf "%q\n" "$@"' -- < /proc/1/environ > /etc/environment
