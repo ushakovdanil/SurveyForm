@@ -1,0 +1,53 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+
+stages:
+  - build
+  - deploy
+
+variables:
+  APP_IMAGE_NAME: "bot-app"
+  CRON_IMAGE_NAME: "bot-cron"
+
+build:
+  stage: build
+  only:
+    refs:
+      - main
+      - tags
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY_IMAGE
+    
+  script:
+    - docker build -f ./Api/Dockerfile -t ${APP_IMAGE_NAME} .
+    - docker tag ${APP_IMAGE_NAME} ${CI_REGISTRY_IMAGE}/${APP_IMAGE_NAME}:${CI_COMMIT_TAG}.${CI_PIPELINE_ID}
+    - docker push ${CI_REGISTRY_IMAGE}/${APP_IMAGE_NAME}:${CI_COMMIT_TAG}.${CI_PIPELINE_ID}
+
+    - docker build -f ./Supervisor/Dockerfile -t ${CRON_IMAGE_NAME} .
+    - docker tag ${CRON_IMAGE_NAME} ${CI_REGISTRY_IMAGE}/${CRON_IMAGE_NAME}:${CI_COMMIT_TAG}.${CI_PIPELINE_ID}
+    - docker push ${CI_REGISTRY_IMAGE}/${CRON_IMAGE_NAME}:${CI_COMMIT_TAG}.${CI_PIPELINE_ID}
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  only:
+    refs:
+      - tags
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY_IMAGE
+  tags:
+    - bot-shell
+  script:
+    - cp "${CI_PROJECT_DIR}"/docker-compose.yml /app
+    - docker compose -f /app/docker-compose.yml up -d
+    - docker compose logs
+    - docker container prune --force --filter "until=2h"
+    - docker image prune -a --force --filter "until=2h"
+    - docker ps
+  needs: ["build"]
+
+
