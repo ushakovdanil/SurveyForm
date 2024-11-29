@@ -1,8 +1,5 @@
 using Carter;
-using Api.Helpers;
 using System.Text.Json.Serialization;
-using Api.Repository.Abstract;
-using Api.Repository;
 using Microsoft.EntityFrameworkCore;
 using Api.Services.Abstract;
 using Api.Services;

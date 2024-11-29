@@ -26,9 +26,10 @@
   <ItemGroup>
     <None Remove="Services\" />
     <None Remove="Services\Abstract\" />
+    <None Remove="Mappers\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <Folder Include="Mappers\" />
   </ItemGroup>
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="https://json.schemastore.org/appsettings.json" /></VisualStudio></ProjectExtensions>
 </Project>

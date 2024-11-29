@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 namespace Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api")]
     public class SurveyFormController : BaseController
     {
         [HttpGet]
@@ -16,7 +16,7 @@ namespace Api.Controllers
         [FromQuery] Guid queueId,
         ISurveyValidatingService surveyValidatingService)
         {
-            var response = await surveyValidatingService.CheckIsSurveyActive(queueId);
+            var response = await surveyValidatingService.CheckIsSurveyActiveWithQuestions(queueId);
             return ResponseFromServiceProcessingResult(response, ResponseType.Ok);
         }
 

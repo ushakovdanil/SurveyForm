@@ -1,7 +1,4 @@
-﻿using Api.Helpers;
-using Api.Repository.Abstract;
-using Api.Repository;
-using Api.Services.Abstract;
+﻿using Api.Services.Abstract;
 using Api.Services;
 using Carter;
 using Microsoft.EntityFrameworkCore;
@@ -30,26 +27,14 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCarter();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ILanguageService, LanguageService>();
-            services.AddScoped<IBotThemeService, BotThemeService>();
-            services.AddScoped<IRequestService, RequestService>();
-            services.AddScoped<IHandleUpdateService, HandleUpdateService>();
             services.AddScoped<ISurveyValidatingService, SurveyValidatingService>();
             services.AddScoped<INetworkService, NetworkService>();
             services.AddControllers().AddNewtonsoftJson();
-            services.AddDbContext<DataContext>(options => options.UseNpgsql(config.GetConnectionString("BotContext")));
             services.AddSingleton<ITelegramBotClient>(
             x =>
             {
                 var bot = config.GetSection("Bot");
                 return new TelegramBotClient(bot["token"]);
-            });
-
-            services.ConfigureHttpJsonOptions(options =>
-            {
-                options.SerializerOptions.Converters.Add(new DateTimeConverterForCustomStandardFormatR());
             });
         }
         public void Configure(WebApplication app, IWebHostEnvironment env)

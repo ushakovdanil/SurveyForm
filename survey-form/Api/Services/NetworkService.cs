@@ -25,7 +25,7 @@ namespace Api.Services
             var httpClient = new HttpClient()
             {
                 //Change this url to baseUrl depends of env dev/stage/prod
-                BaseAddress = new Uri($"http://localhost/ServiceModel/SurveyFormService.svc/")
+                BaseAddress = new Uri($"https://devsuccess.diia.digital/ServiceModel/SurveyFormService.svc/")
             };
 
             httpClient.Timeout = TimeSpan.FromSeconds(5000);
@@ -39,7 +39,7 @@ namespace Api.Services
           object? data = null)
           where TResult : class
         {
-            var url = $"http://localhost/ServiceModel/SurveyFormService.svc/{path}";
+            var url = $"https://devsuccess.diia.digital/ServiceModel/SurveyFormService.svc/{path}";
             
             if (method == HttpMethod.Get && data != null)
             {
