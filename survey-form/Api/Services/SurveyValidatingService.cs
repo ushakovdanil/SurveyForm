@@ -33,11 +33,13 @@ namespace Api.Services
 
         public async Task<ServiceResponse> SaveUserSurveyAnswer(SurveyAnswerDto surveyAnswerDto)
         {
+            var data = new Dictionary<string, object>();
+            data.Add("surveyQuestionId", surveyAnswerDto.SurveyQuestionId);
             var surveyQuestionInfo = await _networkService.MakeApiCall<SurveyFormResponse<SurveyQuestionDto>>(
                 "GetCurrentSurveyQuestion",
                 HttpMethod.Get,
                 new CancellationToken(),
-                surveyAnswerDto.SurveyQuestionId
+                data
             ).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(surveyQuestionInfo.Response.Response.RegularExpression))
@@ -48,22 +50,16 @@ namespace Api.Services
                 }
             }
 
-            var saveResponse = await _networkService.MakeApiCall<SurveyFormResponse<bool>>(
+            var saveResponse = await _networkService.MakeApiCall<SurveyFormResponse<string>>(
                 "SaveUserQurveyAnswer",
                 HttpMethod.Post,
                 new CancellationToken(),
-                surveyAnswerDto.SurveyQuestionId
+                surveyAnswerDto
             ).ConfigureAwait(false);
 
             return saveResponse.IsSuccess
                 ? ServiceResponseBuilder.Success()
-                : ServiceResponseBuilder.Failure("Ошибка при сохранении ответа");
-        }
-
-        private async Task<bool> CheckIsSurveyActive(Guid queueId)
-        {
-            throw new NotImplementedException();
-
+                : ServiceResponseBuilder.Failure("Помилка при збереженні відповіді.");
         }
 
         private bool ValidateAnswer(string answer, string pattern)
